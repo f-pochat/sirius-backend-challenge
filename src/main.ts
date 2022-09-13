@@ -23,4 +23,4 @@ const init = async () => {
   await app.listen(8080);
 };
 
-init();
+init().then(() => console.log('Running'));

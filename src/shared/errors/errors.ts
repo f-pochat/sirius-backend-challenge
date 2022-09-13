@@ -23,3 +23,15 @@ export class NotFoundError extends ApiError {
     super(HttpStatus.NOT_FOUND, `Not Found Error: ${model} not found`);
   }
 }
+
+export class NotUniqueError extends ApiError {
+  constructor(attribute: string) {
+    super(HttpStatus.BAD_REQUEST, `Not Unique Error: ${attribute} is already taken`);
+  }
+}
+
+export class ForbiddenError extends ApiError {
+  constructor() {
+    super(HttpStatus.FORBIDDEN, 'Invalid request');
+  }
+}
