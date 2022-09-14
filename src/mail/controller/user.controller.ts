@@ -1,7 +1,7 @@
-import { Body, Controller, Inject, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, Request, UseGuards } from "@nestjs/common";
 import { IUserService } from "@mail/service";
-import { User } from "@models/mail/entities";
-import { LoginUserDto, RegisterUserDto } from "@models/mail/dto";
+import { Subscriber, User } from "@models/mail/entities";
+import { AddSubscriberDto, LoginUserDto, RegisterUserDto } from "@models/mail/dto";
 import { AuthGuard } from "@nestjs/passport";
 import { RoleGuard } from "@shared/guards/role.guard";
 import { Role } from "@models/mail/enums";
@@ -21,5 +21,13 @@ export class UserController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto): Promise<{ access_token: string }> {
     return await this.userService.login(loginUserDto);
+  }
+
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Get('subscriber')
+  async getSubscribers(@Request() req){
+    return await this.userService.getSubscribers(req.user)
   }
 }

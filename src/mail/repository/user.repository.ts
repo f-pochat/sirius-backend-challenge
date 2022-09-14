@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "@shared/repository";
 import { IUserRepository } from "@mail/repository/user.repository.interface";
 import { DatabaseService } from "@shared/service";
-import { User } from "@models/mail/entities";
+import { Subscriber, User } from "@models/mail/entities";
 
 @Injectable()
 export class UserRepository extends BaseRepository<User> implements IUserRepository{
@@ -28,5 +28,17 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     return await this.findOne(
       {username: username}
     )
+  }
+
+  async findAllSubscribers(userId: String) : Promise<Subscriber[]>{
+    const users =  await this.findOne(
+      {id: userId},
+      {
+      select: {
+        subscribers: true,
+      }
+    })
+
+    return users.subscribers
   }
 }
