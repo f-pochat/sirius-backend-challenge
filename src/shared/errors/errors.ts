@@ -35,3 +35,15 @@ export class ForbiddenError extends ApiError {
     super(HttpStatus.FORBIDDEN, 'Invalid request');
   }
 }
+
+export class MailNotSentError extends ApiError {
+  constructor() {
+    super(HttpStatus.INTERNAL_SERVER_ERROR, 'Error sending emails!');
+  }
+}
+
+export class MailLimitError extends ApiError {
+  constructor(limit: number) {
+    super(HttpStatus.BAD_REQUEST, `Already sent more than ${limit} mails`);
+  }
+}
