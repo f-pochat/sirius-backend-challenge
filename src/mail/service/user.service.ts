@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IUserRepository } from "@mail/repository";
+import { IMailRepository, IUserRepository } from "@mail/repository";
 import { AddSubscriberDto, LoginUserDto, RegisterUserDto } from "@models/mail/dto";
-import { Subscriber, User } from "@models/mail/entities";
+import { Mail, Subscriber, User } from "@models/mail/entities";
 import { IUserService } from ".";
 import { NotFoundError, NotUniqueError, ValidationError } from "@shared/errors";
 import { comparePasswords, encryptPassword } from "@models/mail/util";
@@ -10,7 +10,11 @@ import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UserService implements IUserService {
-  constructor(private jwtService: JwtService, @Inject(IUserRepository) private readonly repository: IUserRepository){}
+  constructor(
+    private jwtService: JwtService,
+    @Inject(IUserRepository) private readonly repository: IUserRepository,
+    @Inject(IMailRepository) private readonly mailRepository: IMailRepository,
+    ){}
 
   async login(loginUserDto: LoginUserDto): Promise<{ access_token: string }> {
     const user = await this.repository.findByUsername(loginUserDto.username);
@@ -36,5 +40,19 @@ export class UserService implements IUserService {
 
   async getSubscribers(user: User) : Promise<Subscriber[]> {
     return await this.repository.findAllSubscribers(user.id);
+  }
+
+  async getStats(): Promise<{
+    activeUsers: User[],
+    mails: Mail[],
+  }> {
+    const mails = await this.mailRepository.findAllDailyMails()
+    const activeUsers = await Promise.all(mails.map(async mail => {
+      return await this.repository.findById(mail.senderId)
+    }))
+    return {
+      activeUsers: activeUsers,
+      mails: mails,
+    }
   }
 }

@@ -1,10 +1,23 @@
 import { SharedModule } from "@shared/shared.module";
 import { Module } from "@nestjs/common";
-import { SubscriberController, UserController } from "@mail/controller";
-import { ISubscriberRepository, IUserRepository, SubscriberRepository, UserRepository } from "@mail/repository";
-import { ISubscriberService, IUserService, SubscriberService, UserService } from "@mail/service";
+import { MailController, SubscriberController, UserController } from "@mail/controller";
+import {
+  IMailRepository,
+  ISubscriberRepository,
+  IUserRepository, MailRepository,
+  SubscriberRepository,
+  UserRepository
+} from "@mail/repository";
+import {
+  IMailService,
+  ISubscriberService,
+  IUserService, MailService,
+  SubscriberService,
+  UserService
+} from "@mail/service";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "@shared/service/jwt.strategy";
+import { IMailProvider, MailgunProvider, NodemailerProvider } from "@mail/providers";
 
 const userRepositoryProvider = {
   provide: IUserRepository,
@@ -26,6 +39,25 @@ const subscriberRepositoryProvider = {
   useClass: SubscriberRepository,
 }
 
+const mailServiceProvider = {
+  provide: IMailService,
+  useClass: MailService
+}
+
+const mailgunProvider = {
+  provide: IMailProvider,
+  useClass: MailgunProvider,
+}
+
+const nodemailProvider = {
+  provide: IMailProvider,
+  useClass: NodemailerProvider,
+}
+
+const mailRepository = {
+  provide: IMailRepository,
+  useClass: MailRepository,
+}
 
 @Module({
   imports: [SharedModule,
@@ -33,11 +65,14 @@ const subscriberRepositoryProvider = {
     secret: 'secrecy',
     signOptions: {expiresIn: '60m'}
   })],
-  controllers: [UserController, SubscriberController],
+  controllers: [UserController, SubscriberController, MailController],
   providers: [userRepositoryProvider,
     userServiceProvider,
     subscriberServiceProvider,
     subscriberRepositoryProvider,
+    mailServiceProvider,
+    nodemailProvider,
+    mailRepository,
     JwtStrategy]
 })
 

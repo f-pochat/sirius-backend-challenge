@@ -20,8 +20,6 @@ export class SubscriberService implements ISubscriberService {
   async deleteSubscriber(subscriberId: String, user: User) {
     const subscriber = await this.repository.findOne({id:subscriberId})
     if (!subscriber) throw new NotFoundError('Subscriber')
-    console.log(user.id)
-    console.log(subscriber.senderId)
     if (subscriber.senderId !== user.id && user.role !== Role.ADMIN) throw new ForbiddenError()
 
     await this.repository.deleteOne({

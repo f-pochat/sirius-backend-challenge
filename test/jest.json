@@ -1,3 +1,4 @@
+
 {
   "moduleFileExtensions": [
     "js",
@@ -13,7 +14,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "@example/(.*)": "<rootDir>/src/example/$1",
+    "@mail/(.*)": "<rootDir>/src/mail/$1",
     "@shared/(.*)": "<rootDir>/src/shared/$1",
     "@models/(.*)": "<rootDir>/src/models/$1"
   },
@@ -23,5 +24,3 @@
   "coverageDirectory": "../coverage",
   "testEnvironment": "node"
 }
-
-    

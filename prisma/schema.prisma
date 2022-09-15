@@ -38,17 +38,18 @@ model Subscriber {
   email    String
   sender   User   @relation(fields: [senderId], references: [id])
   senderId String
-  Mail     Mail[]
+  mails     Mail[]
 }
 
 model Mail {
   id           String     @id @default(uuid())
+  date         DateTime       @default(now())
   sender       User       @relation(fields: [senderId], references: [id])
   senderId     String
   subscriber   Subscriber @relation(fields: [subscriberId], references: [id])
   subscriberId String
+  subject      String
   body         String
-
 }
 
 enum Role {

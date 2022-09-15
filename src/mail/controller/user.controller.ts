@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Post, Request, UseGuards } from "@nestjs/common";
 import { IUserService } from "@mail/service";
-import { Subscriber, User } from "@models/mail/entities";
-import { AddSubscriberDto, LoginUserDto, RegisterUserDto } from "@models/mail/dto";
+import { Mail, User } from "@models/mail/entities";
+import { LoginUserDto, RegisterUserDto } from "@models/mail/dto";
 import { AuthGuard } from "@nestjs/passport";
 import { RoleGuard } from "@shared/guards/role.guard";
 import { Role } from "@models/mail/enums";
@@ -29,5 +29,15 @@ export class UserController {
   @Get('subscriber')
   async getSubscribers(@Request() req){
     return await this.userService.getSubscribers(req.user)
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'),RoleGuard(Role.ADMIN))
+  @Get('stats')
+  async getStats() : Promise<{
+    activeUsers: User[],
+    mails: Mail[],
+  }> {
+    return await this.userService.getStats()
   }
 }
