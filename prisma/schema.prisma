@@ -17,7 +17,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id  String @id @default(uuid())
-  text String  
+model User {
+  id          String       @id @default(uuid())
+  username    String
+  email       String
+  role        Role         @default(USER)
+  password    String
+  subscribers Subscriber[]
+  mails       Mail[]
+}
+
+model Subscriber {
+  id       String @id @default(uuid())
+  name     String
+  email    String
+  sender   User   @relation(fields: [senderId], references: [id])
+  senderId String
+  mails    Mail[]
+}
+
+model Mail {
+  id           String     @id @default(uuid())
+  date         DateTime       @default(now())
+  sender       User       @relation(fields: [senderId], references: [id])
+  senderId     String
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id])
+  subscriberId String
+  subject      String
+  body         String
+}
+
+enum Role {
+  USER
+  ADMIN
 }
